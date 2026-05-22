@@ -117,6 +117,7 @@ function addNet() {
         qty: 1, 
         retail: Math.round(cR + mCost), 
         dealer: Math.round(cD),
+        montageCost: mCost,
         text: `Размер: ${w}х${h} мм | Площадь: ${sqM.toFixed(3)} м²`,
         opts: desc.join(" | "),
         sqM: sqM,
@@ -302,7 +303,9 @@ function renderCart() {
     document.getElementById('cart-summaries').classList.remove('hidden');
 
     ITEMS.forEach((it, i) => {
-        let finalRetail = Math.round(it.retail * markupFactor);
+        let finalRetail = it.type === 'net'
+            ? Math.round(it.dealer * markupFactor) + (it.montageCost !== undefined ? it.montageCost : (it.opts && it.opts.includes("Монтаж") ? (it.title.includes("Дверная") || it.title.includes("плиссе") ? 1000 : 500) : 0))
+            : Math.round(it.retail * markupFactor);
         let itemRetailSum = finalRetail * it.qty;
         let itemDealerSum = it.dealer * it.qty;
         
@@ -393,7 +396,12 @@ function saveOrderToArchive() {
     
     let totalR = 0;
     let markupFactor = 1 + (parseInt(markup) / 100);
-    ITEMS.forEach(it => { totalR += Math.round(it.retail * markupFactor) * it.qty; });
+    ITEMS.forEach(it => {
+        let finalRetail = it.type === 'net'
+            ? Math.round(it.dealer * markupFactor) + (it.montageCost !== undefined ? it.montageCost : (it.opts && it.opts.includes("Монтаж") ? (it.title.includes("Дверная") || it.title.includes("плиссе") ? 1000 : 500) : 0))
+            : Math.round(it.retail * markupFactor);
+        totalR += finalRetail * it.qty;
+    });
 
     let newOrder = {
         id: Date.now().toString(),
@@ -673,14 +681,18 @@ async function saveCartToExcelDatabase() {
         let totalRetail = 0;
         let totalDealer = 0;
         ITEMS.forEach(it => {
-            let finalRetail = Math.round(it.retail * markupFactor);
+            let finalRetail = it.type === 'net'
+                ? Math.round(it.dealer * markupFactor) + (it.montageCost !== undefined ? it.montageCost : (it.opts && it.opts.includes("Монтаж") ? (it.title.includes("Дверная") || it.title.includes("плиссе") ? 1000 : 500) : 0))
+                : Math.round(it.retail * markupFactor);
             totalRetail += finalRetail * it.qty;
             totalDealer += it.dealer * it.qty;
         });
         let totalProfit = totalRetail - totalDealer;
 
         ITEMS.forEach((it, index) => {
-            let finalRetail = Math.round(it.retail * markupFactor);
+            let finalRetail = it.type === 'net'
+                ? Math.round(it.dealer * markupFactor) + (it.montageCost !== undefined ? it.montageCost : (it.opts && it.opts.includes("Монтаж") ? (it.title.includes("Дверная") || it.title.includes("плиссе") ? 1000 : 500) : 0))
+                : Math.round(it.retail * markupFactor);
             let itemRetailSum = finalRetail * it.qty;
             let itemDealerSum = it.dealer * it.qty;
             let itemProfit = itemRetailSum - itemDealerSum;
