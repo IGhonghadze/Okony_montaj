@@ -144,13 +144,19 @@
                                     <option value="готовое">Готовое изделие</option>
                                 </select>
                             </div>
-                            <div class="mb-5">
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Полотно</label>
-                                <select id="net-fabric" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-primary">
-                                    <option value="стандарт">Стандартное</option>
-                                    <option value="антикошка">Антикошка</option>
-                                    <option value="антипыль">Антипыль</option>
-                                </select>
+                            <div class="grid grid-cols-2 gap-4 mb-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Полотно</label>
+                                    <select id="net-fabric" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-primary">
+                                        <option value="стандарт">Стандартное</option>
+                                        <option value="антикошка">Антикошка</option>
+                                        <option value="антипыль">Антипыль</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Кол-во (шт)</label>
+                                    <input type="number" id="net-qty" value="1" min="1" placeholder="1" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-primary">
+                                </div>
                             </div>
                             <div class="flex gap-6 mb-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
                                 <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="net-corners" class="w-4 h-4 text-brand-primary rounded"> <span class="text-sm font-medium">Уголки металл</span></label>
@@ -242,11 +248,10 @@
                                     <option>Финишный профиль (F-образный)</option>
                                 </select>
                             </div>
-                            <div class="grid grid-cols-2 gap-4 mb-4">
-                                <div><label class="block text-sm font-medium text-slate-600 mb-1">Глубина (мм)</label><input type="number" id="prof-d" placeholder="Например 100" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-primary" data-next="prof-l"></div>
+                            <div class="grid grid-cols-2 gap-4 mb-6">
                                 <div><label class="block text-sm font-medium text-slate-600 mb-1">Длина (мм)</label><input type="number" id="prof-l" placeholder="Например 1500" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-primary" data-next="btn-add-prof"></div>
+                                <div><label class="block text-sm font-medium text-slate-600 mb-1">Кол-во (шт)</label><input type="number" id="prof-qty" value="1" min="1" placeholder="1" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-primary"></div>
                             </div>
-                            <div class="mb-6"><label class="block text-sm font-medium text-slate-600 mb-1">Кол-во (шт)</label><input type="number" id="prof-qty" value="1" min="1" placeholder="1" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-primary"></div>
                             <button id="btn-add-prof" onclick="addProfile()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow-md transition-all">Добавить профиль</button>
                         </div>
 

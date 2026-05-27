@@ -56,6 +56,7 @@ function addNet() {
     let hIn = parseFloat(document.getElementById('net-h').value);
     let zamer = document.getElementById('net-zamer').value;
     let fabric = document.getElementById('net-fabric').value;
+    let qty = parseInt(document.getElementById('net-qty').value) || 1;
     let corners = document.getElementById('net-corners').checked;
     let montage = document.getElementById('net-montage').checked;
 
@@ -114,11 +115,11 @@ function addNet() {
         id: Date.now(), 
         type: 'net',
         title: `${sys} (${col})`, 
-        qty: 1, 
+        qty: qty, 
         retail: Math.round(cR + mCost), 
         dealer: Math.round(cD),
         montageCost: mCost,
-        text: `Размер: ${w}х${h} мм | Площадь: ${sqM.toFixed(3)} м²`,
+        text: `Размер: ${w}х${h} мм`,
         opts: desc.join(" | "),
         sqM: sqM,
         linM: 0
@@ -126,6 +127,7 @@ function addNet() {
     
     document.getElementById('net-w').value = '';
     document.getElementById('net-h').value = '';
+    document.getElementById('net-qty').value = '1';
     document.getElementById('net-w').focus();
     renderCart();
 }
@@ -182,7 +184,7 @@ function addSandwich() {
         title: `Сэндвич-панель ${thick}`, 
         qty: qty, 
         retail: 0, dealer: 0,
-        text: `Размеры: ${wIn}х${hIn} мм | Цвет: ${col} | Площадь: ${sqM.toFixed(3)} м²`,
+        text: `Размеры: ${wIn}х${hIn} мм | Цвет: ${col}`,
         opts: "",
         sqM: sqM,
         linM: 0
@@ -227,11 +229,10 @@ function addEbb() {
 
 function addProfile() {
     let type = document.getElementById('prof-type').value;
-    let dIn = parseFloat(document.getElementById('prof-d').value);
     let lIn = parseFloat(document.getElementById('prof-l').value);
     let qty = parseInt(document.getElementById('prof-qty').value) || 1;
 
-    if (!dIn || !lIn) { alert("Заполните глубину и длину профиля!"); return; }
+    if (!lIn) { alert("Заполните длину профиля!"); return; }
 
     let lM = lIn / 1000;
 
@@ -242,16 +243,15 @@ function addProfile() {
         title: type, 
         qty: qty, 
         retail: 0, dealer: 0,
-        text: `Глубина: ${dIn} мм, Длина: ${lIn} мм`,
+        text: `Длина: ${lIn} мм`,
         opts: "",
         sqM: 0,
         linM: lM
     });
     
-    document.getElementById('prof-d').value = '';
     document.getElementById('prof-l').value = '';
     document.getElementById('prof-qty').value = '1';
-    document.getElementById('prof-d').focus();
+    document.getElementById('prof-l').focus();
     renderCart();
 }
 
@@ -335,6 +335,11 @@ function renderCart() {
             ? `<div class="text-right font-black text-brand-primary text-lg whitespace-nowrap">${itemRetailSum.toLocaleString()} ₽ <div class="text-xs text-slate-400 font-medium">(${finalRetail.toLocaleString()} ₽/шт)</div></div>`
             : ``; // Оставляем пустым для позиций без цены
         
+        let dynInfo = "";
+        if (it.sqM) dynInfo += ` | Площадь: ${(it.sqM * it.qty).toFixed(3)} м²`;
+        if (it.linM) dynInfo += ` | Погонаж: ${(it.linM * it.qty).toFixed(2)} п.м.`;
+        let itemTextDisplay = it.text + dynInfo;
+
         list.innerHTML += `
             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm relative group hover:border-brand-primary transition-all cart-item-print">
                 
@@ -343,7 +348,7 @@ function renderCart() {
                 </div>
                 
                 <div class="font-bold text-slate-800 pr-16 mb-1">${i+1}. ${it.title}</div>
-                <div class="text-sm text-slate-500 leading-snug w-full md:w-3/4">${it.text}</div>
+                <div class="text-sm text-slate-500 leading-snug w-full md:w-3/4">${itemTextDisplay}</div>
                 ${it.opts ? `<div class="text-xs text-brand-primary mt-1 font-medium">${it.opts}</div>` : ''}
                 
                 <div class="mt-3 flex justify-between items-end">
@@ -352,7 +357,7 @@ function renderCart() {
                         <span class="w-6 text-center font-bold text-sm text-slate-700">${it.qty}</span>
                         <button onclick="updateQty(${it.id}, 1)" class="w-7 h-7 flex items-center justify-center bg-white text-slate-600 rounded-md shadow-sm hover:bg-slate-200">+</button>
                     </div>
-                    <div class="hidden print-only font-bold text-slate-700">Кол-во: ${it.qty} шт</div>
+                    <div class="hidden print:block font-bold text-slate-700">Кол-во: ${it.qty} шт</div>
                     ${priceStr}
                 </div>
             </div>`;
