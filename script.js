@@ -335,29 +335,29 @@ function renderCart() {
             ? `<div class="text-right font-black text-brand-primary text-lg whitespace-nowrap">${itemRetailSum.toLocaleString()} ₽ <div class="text-xs text-slate-400 font-medium">(${finalRetail.toLocaleString()} ₽/шт)</div></div>`
             : ``; // Оставляем пустым для позиций без цены
         
-        let dynInfo = "";
-        if (it.sqM) dynInfo += ` | Площадь: ${(it.sqM * it.qty).toFixed(3)} м²`;
-        if (it.linM) dynInfo += ` | Погонаж: ${(it.linM * it.qty).toFixed(2)} п.м.`;
+        let dynInfo = ` | Кол-во: ${it.qty} шт`;
+        if (it.sqM) dynInfo += ` | Итого площадь: ${(it.sqM * it.qty).toFixed(3)} м²`;
+        if (it.linM) dynInfo += ` | Итого погонаж: ${(it.linM * it.qty).toFixed(2)} п.м.`;
         let itemTextDisplay = it.text + dynInfo;
 
         list.innerHTML += `
             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm relative group hover:border-brand-primary transition-all cart-item-print">
-                
                 <div class="absolute top-3 right-3 flex gap-2 no-print">
                     <button onclick="removeItem(${it.id})" class="text-slate-300 hover:text-red-500 transition-colors bg-slate-50 p-1.5 rounded-lg del-btn" title="Удалить"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                 </div>
                 
-                <div class="font-bold text-slate-800 pr-16 mb-1">${i+1}. ${it.title}</div>
-                <div class="text-sm text-slate-500 leading-snug w-full md:w-3/4">${itemTextDisplay}</div>
-                ${it.opts ? `<div class="text-xs text-brand-primary mt-1 font-medium">${it.opts}</div>` : ''}
+                <div class="flex-1 pr-12">
+                    <div class="font-bold text-slate-800 mb-1">${i+1}. ${it.title}</div>
+                    <div class="text-sm text-slate-500 leading-snug">${itemTextDisplay}</div>
+                    ${it.opts ? `<div class="text-xs text-brand-primary mt-1 font-medium">${it.opts}</div>` : ''}
+                </div>
                 
-                <div class="mt-3 flex justify-between items-end">
-                    <div class="flex items-center gap-2 no-print bg-slate-100 p-1 rounded-lg">
+                <div class="flex flex-col items-end justify-between ml-2">
+                    <div class="flex items-center gap-2 no-print bg-slate-100 p-1 rounded-lg mb-2">
                         <button onclick="updateQty(${it.id}, -1)" class="w-7 h-7 flex items-center justify-center bg-white text-slate-600 rounded-md shadow-sm hover:bg-slate-200">-</button>
                         <span class="w-6 text-center font-bold text-sm text-slate-700">${it.qty}</span>
                         <button onclick="updateQty(${it.id}, 1)" class="w-7 h-7 flex items-center justify-center bg-white text-slate-600 rounded-md shadow-sm hover:bg-slate-200">+</button>
                     </div>
-                    <div class="hidden print:block font-bold text-slate-700">Кол-во: ${it.qty} шт</div>
                     ${priceStr}
                 </div>
             </div>`;
@@ -702,8 +702,13 @@ async function saveCartToExcelDatabase() {
             let itemDealerSum = it.dealer * it.qty;
             let itemProfit = itemRetailSum - itemDealerSum;
 
+            let dynInfo = ``;
+            if (it.sqM) dynInfo += ` | Итого площадь: ${(it.sqM * it.qty).toFixed(3)} м²`;
+            if (it.linM) dynInfo += ` | Итого погонаж: ${(it.linM * it.qty).toFixed(2)} п.м.`;
+            let itemTextDisplayForExcel = it.text + dynInfo;
+
             let row = [
-                orderId, CURRENT_ORDER_NAME, dateTime, index + 1, it.title, it.text, it.opts || "-",
+                orderId, CURRENT_ORDER_NAME, dateTime, index + 1, it.title, itemTextDisplayForExcel, it.opts || "-",
                 it.qty, finalRetail || "-", it.dealer || "-", itemRetailSum || "-", itemDealerSum || "-", itemProfit || "-",
                 index === 0 ? totalRetail : "", index === 0 ? totalProfit : "", index === 0 ? `${markupPercent}%` : ""
             ];
